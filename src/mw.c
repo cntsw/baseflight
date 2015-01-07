@@ -74,9 +74,6 @@ uint8_t batteryCellCount = 3;       // cell count
 uint16_t batteryWarningVoltage;     // slow buzzer after this one, recommended 80% of battery used. Time to land.
 uint16_t batteryCriticalVoltage;    // annoying buzzer after this one, battery is going to be dead.
 
-// Time of automatic disarm when "Don't spin the motors when armed" is enabled.
-static uint32_t disarmTime = 0;
-
 void blinkLED(uint8_t num, uint8_t wait, uint8_t repeat)
 {
     uint8_t i, r;
@@ -251,6 +248,11 @@ uint16_t pwmReadRawRC(uint8_t chan)
     return pwmRead(mcfg.rcmap[chan]);
 }
 
+uint16_t GetNRF_RC_DAT(uint8_t chan) //tsw_tsw
+{
+    return RC_DAT[chan];
+}
+
 void computeRC(void)
 {
     uint16_t capture;
@@ -309,9 +311,6 @@ static void mwDisarm(void)
         f.ARMED = 0;
         // Beep for inform about disarming
         buzzer(BUZZER_DISARMING);
-        // Reset disarm time so that it works next time we arm the board.
-        if (disarmTime != 0)
-            disarmTime = 0;
     }
 }
 
@@ -509,7 +508,7 @@ void loop(void)
             if (!rcOptions[BOXARM])
                 mwDisarm();
         }
-
+/*
         // Read rssi value
         rssi = RSSI_getValue();
 
@@ -535,7 +534,7 @@ void loop(void)
             failsafeCnt++;
         }
         // end of failsafe routine - next change is made with RcOptions setting
-
+*/
         // ------------------ STICKS COMMAND HANDLER --------------------
         // checking sticks positions
         for (i = 0; i < 4; i++) {
@@ -839,18 +838,7 @@ void loop(void)
                 }
             }
         }
-        // When armed and motors aren't spinning. Make warning beeps so that accidentally won't lose fingers...
-        // Also disarm board after 5 sec so users without buzzer won't lose fingers.
-        if (feature(FEATURE_MOTOR_STOP) && f.ARMED && !f.FIXED_WING) {
-            if (isThrottleLow) {
-                if (disarmTime == 0)
-                    disarmTime = millis() + 1000 * mcfg.auto_disarm_board;
-                else if (disarmTime < millis() && mcfg.auto_disarm_board != 0)
-                    mwDisarm();
-                buzzer(BUZZER_ARMED);
-            } else if (disarmTime != 0)
-                disarmTime = 0;
-        }
+				
     } else {                        // not in rc loop
         static int taskOrder = 0;   // never call all function in the same loop, to avoid high delay spikes
         switch (taskOrder) {
@@ -907,6 +895,9 @@ void loop(void)
         previousTime = currentTime;
         // non IMU critical, temeperatur, serialcom
         annexCode();
+        // When armed and motors aren't spinning. Make warning beeps so that accidentally won't lose fingers...
+        if (isThrottleLow && feature(FEATURE_MOTOR_STOP) && f.ARMED)
+            buzzer(BUZZER_ARMED);
 #ifdef MAG
         if (sensors(SENSOR_MAG)) {
             if (abs(rcCommand[YAW]) < 70 && f.MAG_MODE) {
