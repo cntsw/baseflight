@@ -201,10 +201,10 @@ typedef struct baro_t {
 #if defined(NAZE)
 // Afroflight32
 
-#define LED0_GPIO   GPIOB
-#define LED0_PIN    Pin_3 // PB3 (LED)
-#define LED1_GPIO   GPIOB
-#define LED1_PIN    Pin_4 // PB4 (LED)
+#define LED0_GPIO   GPIOC
+#define LED0_PIN    Pin_12 // LED5
+#define LED1_GPIO   GPIOC
+#define LED1_PIN    Pin_11 // LED4
 #define BEEP_GPIO   GPIOA
 #define BEEP_PIN    Pin_12 // PA12 (Buzzer)
 #define BARO_GPIO   GPIOC
@@ -255,6 +255,8 @@ typedef struct baro_t {
 #include "drv_uart.h"
 #include "drv_softserial.h"
 #include "drv_hcsr04.h"
+#include "mycode/nRF24L01p.h"
+#include "mycode/spi2.h"
 
 #elif defined(CJMCU)
 // CJMCU brushed quad pcb

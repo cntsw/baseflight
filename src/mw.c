@@ -510,7 +510,7 @@ void loop(void)
             if (!rcOptions[BOXARM])
                 mwDisarm();
         }
-
+/*
         // Read rssi value
         rssi = RSSI_getValue();
 
@@ -536,7 +536,7 @@ void loop(void)
             failsafeCnt++;
         }
         // end of failsafe routine - next change is made with RcOptions setting
-
+*/
         // ------------------ STICKS COMMAND HANDLER --------------------
         // checking sticks positions
         for (i = 0; i < 4; i++) {
