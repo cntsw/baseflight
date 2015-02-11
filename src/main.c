@@ -254,17 +254,17 @@ int main(void)
     // loopy
     while (1) {
         loop();
-        if(micros()-nRF_cnt>=2000) { //2ms
+        if(micros()-nRF_cnt>=1000) { //1ms
             nRF_cnt=micros();
-            if(RC_timeout>100) { //200ms timeout
+            if(RC_timeout>500) { //500ms timeout
                 if(f.ARMED)
                 {
                     for (i = 0; i < 3; i++){
                         rcData[i] = mcfg.midrc;      // after specified guard time after RC signal is lost (in 0.1sec)
-                        rcData[THROTTLE] = cfg.failsafe_throttle;
                     }
-                } else RC_timeout++;
-            }
+                    rcData[THROTTLE] = cfg.failsafe_throttle;
+                } 
+            }else RC_timeout++;
             nRF_checkEvent();
         }
 

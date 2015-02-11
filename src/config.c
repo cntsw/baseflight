@@ -190,7 +190,7 @@ static void resetConf(void)
 #ifdef CJMCU
     featureSet(FEATURE_PPM);
 #else
-    featureSet(FEATURE_VBAT);
+    featureSet(FEATURE_GPS);
 #endif
 
     // global settings
@@ -230,7 +230,7 @@ static void resetConf(void)
     mcfg.disarm_kill_switch = 1; // AUX disarm independently of throttle value
     mcfg.fw_althold_dir = 1;
     // Motor/ESC/Servo
-    mcfg.minthrottle = 1150;
+    mcfg.minthrottle = 1000;
     mcfg.maxthrottle = 1850;
     mcfg.mincommand = 1000;
     mcfg.deadband3d_low = 1406;
@@ -255,16 +255,16 @@ static void resetConf(void)
     mcfg.rssi_adc_max = 4095;
 
     cfg.pidController = 0;
-    cfg.P8[ROLL] = 40;
-    cfg.I8[ROLL] = 30;
-    cfg.D8[ROLL] = 23;
-    cfg.P8[PITCH] = 40;
-    cfg.I8[PITCH] = 30;
-    cfg.D8[PITCH] = 23;
+    cfg.P8[ROLL] = 68;
+    cfg.I8[ROLL] = 2;
+    cfg.D8[ROLL] = 35;
+    cfg.P8[PITCH] = 68;
+    cfg.I8[PITCH] = 2;
+    cfg.D8[PITCH] = 35;
     cfg.P8[YAW] = 85;
     cfg.I8[YAW] = 45;
     cfg.D8[YAW] = 0;
-    cfg.P8[PIDALT] = 50;
+    cfg.P8[PIDALT] = 23;
     cfg.I8[PIDALT] = 0;
     cfg.D8[PIDALT] = 0;
     cfg.P8[PIDPOS] = 11; // POSHOLD_P * 100;
@@ -276,14 +276,14 @@ static void resetConf(void)
     cfg.P8[PIDNAVR] = 14; // NAV_P * 10;
     cfg.I8[PIDNAVR] = 20; // NAV_I * 100;
     cfg.D8[PIDNAVR] = 80; // NAV_D * 1000;
-    cfg.P8[PIDLEVEL] = 90;
-    cfg.I8[PIDLEVEL] = 10;
-    cfg.D8[PIDLEVEL] = 100;
+    cfg.P8[PIDLEVEL] = 74;
+    cfg.I8[PIDLEVEL] = 6;
+    cfg.D8[PIDLEVEL] = 80;
     cfg.P8[PIDMAG] = 40;
-    cfg.P8[PIDVEL] = 120;
-    cfg.I8[PIDVEL] = 45;
-    cfg.D8[PIDVEL] = 1;
-    cfg.rcRate8 = 90;
+    cfg.P8[PIDVEL] = 30;
+    cfg.I8[PIDVEL] = 2;
+    cfg.D8[PIDVEL] = 15;
+    cfg.rcRate8 = 30;
     cfg.rcExpo8 = 65;
     cfg.rollPitchRate = 0;
     cfg.yawRate = 0;
@@ -296,7 +296,7 @@ static void resetConf(void)
     cfg.angleTrim[0] = 0;
     cfg.angleTrim[1] = 0;
     cfg.mag_declination = 0;    // For example, -6deg 37min, = -637 Japan, format is [sign]dddmm (degreesminutes) default is zero.
-    cfg.acc_lpf_factor = 4;
+    cfg.acc_lpf_factor = 10;
     cfg.accz_deadband = 40;
     cfg.accxy_deadband = 40;
     cfg.baro_tab_size = 21;
@@ -312,7 +312,7 @@ static void resetConf(void)
     cfg.deadband = 0;
     cfg.yawdeadband = 0;
     cfg.alt_hold_throttle_neutral = 40;
-    cfg.alt_hold_fast_change = 1;
+    cfg.alt_hold_fast_change = 0;
     cfg.throttle_correction_value = 0;      // could 10 with althold or 40 for fpv
     cfg.throttle_correction_angle = 800;    // could be 80.0 deg with atlhold or 45.0 for fpv
 

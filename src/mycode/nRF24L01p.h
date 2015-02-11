@@ -37,8 +37,8 @@ u8 spi_RW(u8 dat);
 #define NRF_TX_PLOAD_WIDTH	32
 #define NRF_TX_ADR_WIDTH	5
 #define NRF_RX_ADR_WIDTH	5
-#define NRF_ADDR_RX			0xE1,0xE2,0xE3,0xE4,0xE5
-#define NRF_ADDR_TX			0xE1,0xE2,0xE3,0xE4,0xE5
+#define NRF_ADDR_RX			0xA0,0xB1,0x2C,0x3D,0x00
+#define NRF_ADDR_TX			0xA0,0xB1,0x2C,0x3D,0x00
 
 
 /*****************
@@ -78,6 +78,7 @@ u8 spi_RW(u8 dat);
 #define STA_TX_DS		0x20	// TX Data Sent;数据已发送标志位，如果设置了AUTO_ACK只有当接收到ACK时才置1
 #define STA_MAX_RT		0x10	// MAX number of TX retransmits interrupt
 
+#define FIFO_TX_FULL 0x20
 
 //************************************************模式选择********************************************************
 #define MODEL_RX				1			//普通接收
@@ -115,4 +116,5 @@ u8 nRF_init(mRF_mode_t mode, unsigned char ch);
 
 u8 nRF_readReg(u8 reg);
 u8 nRF_getStatus(void);
+unsigned char nRF_canTransmit(void);
 #endif

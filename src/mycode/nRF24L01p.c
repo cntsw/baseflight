@@ -248,3 +248,11 @@ unsigned char nRF_getStatus(void)
 {
 	return command(NOP);
 }
+
+unsigned char nRF_canTransmit(void)
+{
+	u8 fifo_sta=nRF_readReg(FIFO_STATUS);
+	if(fifo_sta & FIFO_TX_FULL) return 0;	//如果fifo是满的，就不可以发送
+	else return 1;	//TX_FULL=0  注意FIFO是3个32字节的
+}
+

@@ -351,7 +351,7 @@
               <MiscControls>--c99 --gnu</MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER,NAZE</Define>
               <Undefine></Undefine>
-              <IncludePath>lib\CMSIS\CM3\CoreSupport;lib\CMSIS\CM3\DeviceSupport\ST\STM32F10x;lib\STM32F10x_StdPeriph_Driver\inc;.\src\mycode</IncludePath>
+              <IncludePath>lib\CMSIS\CM3\CoreSupport;lib\CMSIS\CM3\DeviceSupport\ST\STM32F10x;lib\STM32F10x_StdPeriph_Driver\inc;.\src\mycode;.\src</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
