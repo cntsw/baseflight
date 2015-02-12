@@ -203,7 +203,7 @@ static void resetConf(void)
     mcfg.accZero[2] = 0;
     mcfg.gyro_align = ALIGN_DEFAULT;
     mcfg.acc_align = ALIGN_DEFAULT;
-    mcfg.mag_align = ALIGN_DEFAULT;
+    mcfg.mag_align = CW180_DEG;
     mcfg.board_align_roll = 0;
     mcfg.board_align_pitch = 0;
     mcfg.board_align_yaw = 0;

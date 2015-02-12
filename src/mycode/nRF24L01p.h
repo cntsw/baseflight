@@ -78,8 +78,8 @@ u8 spi_RW(u8 dat);
 #define STA_TX_DS		0x20	// TX Data Sent;数据已发送标志位，如果设置了AUTO_ACK只有当接收到ACK时才置1
 #define STA_MAX_RT		0x10	// MAX number of TX retransmits interrupt
 
-#define FIFO_TX_FULL 0x20
-
+#define FIFO_TX_FULL 	0x20
+#define FIFO_RX_EMPTY	0x01
 //************************************************模式选择********************************************************
 #define MODEL_RX				1			//普通接收
 #define MODEL_TX				2			//普通发送

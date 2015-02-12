@@ -3,7 +3,7 @@
 static u16 rc_data[8]= {1500,1500,1500,1000,1000,1000,1000,1000};
 
 extern u16 RC_timeout;
-static u8 rx_buf[32];
+
 
 static void rxdata_deal(u8 *pBuf,u8 len)
 {
@@ -116,22 +116,28 @@ void nRF_checkEvent(void)
 		nRF_clearFlag(STATUS,STA_TX_DS);
 	}
 	if( sta & STA_RX_DR ) {//接收到数据
-		u8 rx_len = nRF_receive_getlen();
-		if(rx_len<=32) {
-			nRF_receive(rx_buf,rx_len);// read receive payload from RX_FIFO buffer
-			if(*rx_buf==0xda) {	//电脑端传来的数据
-				u8 cnt=0;
-				cnt++,rx_len--;//忽略第一个字节
-				for(; rx_len; cnt++,rx_len--) { //将其他所有的数据依次送入nRF的rxBuffer  注意，实例只能读rx，此处为操作函数所以可以写rx
-					nrfPort.port.rxBuffer[nrfPort.port.rxBufferHead] = rx_buf[cnt];
-					nrfPort.port.rxBufferHead = (nrfPort.port.rxBufferHead + 1) % nrfPort.port.rxBufferSize;
+		u8 _cnt=0;
+		do {
+			u8 rx_buf[32];
+			u8 rx_len = nRF_receive_getlen();
+			if(rx_len<33 && rx_len>0) {
+				nRF_receive(rx_buf,rx_len);// read receive payload from RX_FIFO buffer
+				if(*rx_buf==0xda) {	//电脑端传来的数据
+					u8 cnt=0;
+					cnt++,rx_len--;//忽略第一个字节
+					for(; rx_len; cnt++,rx_len--) { //将其他所有的数据依次送入nRF的rxBuffer  注意，实例只能读rx，此处为操作函数所以可以写rx
+						nrfPort.port.rxBuffer[nrfPort.port.rxBufferHead] = rx_buf[cnt];
+						nrfPort.port.rxBufferHead = (nrfPort.port.rxBufferHead + 1) % nrfPort.port.rxBufferSize;
+					}
+				} else {	//用户遥控数据
+					rxdata_deal(rx_buf,rx_len);
 				}
-			} else {	//用户遥控数据
-				rxdata_deal(rx_buf,rx_len);
+			} else {
+				nRF_FLUSE_RX();
 			}
-		} else {
-			nRF_FLUSE_RX();
-		}
+			_cnt++;
+			if(_cnt>5) break;	//防守程序，飞机不能循环太长时间
+		} while(!(nRF_readReg(FIFO_STATUS) & FIFO_RX_EMPTY));
 		nRF_clearFlag(STATUS,STA_RX_DR);
 	}
 
