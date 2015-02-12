@@ -18,6 +18,11 @@ extern uint16_t pwmReadRawRC(uint8_t chan);
 // from system_stm32f10x.c
 void SetSysClock(bool overclock);
 
+//my nRF function
+#include "nRFapp.h"
+u32 nRF_cnt=0;
+u16 RC_timeout=0;
+
 #ifdef USE_LAME_PRINTF
 // gcc/GNU version
 static void _putc(void *p, char c)
@@ -30,16 +35,13 @@ static void _putc(void *p, char c)
 int fputc(int c, FILE *f)
 {
     // let DMA catch up a bit when using set or dump, we're too fast.
-    while (!isSerialTransmitBufferEmpty(core.mainport));
+    delay(1); //限定一秒钟1000个字符
+	nRF_checkEvent();
     serialWrite(core.mainport, c);
     return c;
 }
 #endif
 
-//my nRF function
-#include "nRFapp.h"
-u32 nRF_cnt=0;
-u16 RC_timeout=0;
 
 int main(void)
 {
