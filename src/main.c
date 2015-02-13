@@ -35,7 +35,7 @@ static void _putc(void *p, char c)
 int fputc(int c, FILE *f)
 {
     // let DMA catch up a bit when using set or dump, we're too fast.
-    delay(1); //限定一秒钟1000个字符
+    delay(1); //限定一秒钟1000个字符   正常情况下 31*100=3100个 取1/3
 	nRF_checkEvent();
     serialWrite(core.mainport, c);
     return c;

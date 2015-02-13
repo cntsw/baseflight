@@ -122,15 +122,16 @@ void nRF_checkEvent(void)
 			u8 rx_len = nRF_receive_getlen();
 			if(rx_len<33 && rx_len>0) {
 				nRF_receive(rx_buf,rx_len);// read receive payload from RX_FIFO buffer
-				if(*rx_buf==0xda) {	//电脑端传来的数据
+				if(*rx_buf==0xAA) { //0xaa 遥控数据头文件
+					rxdata_deal(rx_buf,rx_len);
+				} else if(*rx_buf==0xDA) {	//电脑端传来的数据
 					u8 cnt=0;
 					cnt++,rx_len--;//忽略第一个字节
-					for(; rx_len; cnt++,rx_len--) { //将其他所有的数据依次送入nRF的rxBuffer  注意，实例只能读rx，此处为操作函数所以可以写rx
+					for(; rx_len; cnt++,rx_len--) { //将其他所有的数据依次送入nRF的rxBuffer  注意，实例只能读rx，此处为操作函数将数据写入rxbuf让其他程序读
 						nrfPort.port.rxBuffer[nrfPort.port.rxBufferHead] = rx_buf[cnt];
 						nrfPort.port.rxBufferHead = (nrfPort.port.rxBufferHead + 1) % nrfPort.port.rxBufferSize;
 					}
-				} else {	//用户遥控数据
-					rxdata_deal(rx_buf,rx_len);
+				} else {	//用户遥控数据 空数据包不用理会
 				}
 			} else {
 				nRF_FLUSE_RX();
@@ -150,17 +151,12 @@ void nRF_checkEvent(void)
 				dat_buf[cnt]=nrfPort.port.txBuffer[nrfPort.port.txBufferTail];
 				nrfPort.port.txBufferTail = (nrfPort.port.txBufferTail + 1) % nrfPort.port.txBufferSize; //从尾往头发送
 				cnt++;
-				if(cnt==32) break;
+				if(cnt==32) {
+					//dat_buf[0]=0xDB; //0xDB 表示需要PTX发送空包（以0x00开头）来获取飞机的ackpalyload //FIXME 暂时未编写此功能
+					break;
+				}
 			}
 			nRF_transmit_ackPayload(dat_buf,cnt); //发送一包数据 以0xda开头
 		}
-		//else {
-		//	nRF_FLUSE_TX();
-		//}
 	}
-
-//	sta=nRF_readReg(FIFO_STATUS);
-//	if(sta & 0x02) {
-//		nRF_FLUSE_RX();
-//	}
 }
