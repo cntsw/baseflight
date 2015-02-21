@@ -117,7 +117,7 @@ void nRF_checkEvent(void)
 	}
 	if( sta & STA_RX_DR ) {//接收到数据
 		u8 _cnt=0;
-		do {
+		do { //应该移植到外面
 			u8 rx_buf[32];
 			u8 rx_len = nRF_receive_getlen();
 			if(rx_len<33 && rx_len>0) {
