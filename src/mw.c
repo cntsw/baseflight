@@ -483,7 +483,7 @@ void loop(void)
     bool rcReady = false;
 
     // calculate rc stuff from serial-based receivers (spek/sbus)
-    if (feature(FEATURE_SERIALRX)) {
+    if (feature(FEATURE_SERIALRX)) {	//默认不会执行到这里
         switch (mcfg.serialrx_type) {
             case SERIALRX_SPEKTRUM1024:
             case SERIALRX_SPEKTRUM2048:
@@ -514,7 +514,7 @@ void loop(void)
             if (!rcOptions[BOXARM])
                 mwDisarm();
         }
-
+/*
         // Read rssi value
         rssi = RSSI_getValue();
 
@@ -540,7 +540,7 @@ void loop(void)
             failsafeCnt++;
         }
         // end of failsafe routine - next change is made with RcOptions setting
-
+*/
         // ------------------ STICKS COMMAND HANDLER --------------------
         // checking sticks positions
         for (i = 0; i < 4; i++) {

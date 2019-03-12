@@ -167,7 +167,7 @@ void gpsInit(uint8_t baudrateIndex)
         core.gpsport = &(softSerialPorts[0].port);
     } else
         // Open GPS UART, no callback - buffer will be read out in gpsThread()
-        core.gpsport = uartOpen(USART2, NULL, gpsInitData[baudrateIndex].baudrate, mode);    // signal GPS "thread" to initialize when it gets to it
+        core.gpsport = uartOpen(USART1, NULL, gpsInitData[baudrateIndex].baudrate, mode);    // signal GPS "thread" to initialize when it gets to it
     // signal GPS "thread" to initialize when it gets to it
     gpsSetState(GPS_INITIALIZING);
 
@@ -195,8 +195,8 @@ static void gpsInitUblox(void)
     // UBX will run at mcfg.gps_baudrate, it shouldn't be "autodetected". So here we force it to that rate
 
     // Wait until GPS transmit buffer is empty
-    if (!isSerialTransmitBufferEmpty(core.gpsport))
-        return;
+    //if (!isSerialTransmitBufferEmpty(core.gpsport))
+    //    return;
 
     switch (gpsData.state) {
         case GPS_INITIALIZING:

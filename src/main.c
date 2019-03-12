@@ -18,6 +18,11 @@ extern uint16_t pwmReadRawRC(uint8_t chan);
 // from system_stm32f10x.c
 void SetSysClock(bool overclock);
 
+//my nRF function
+#include "nRFapp.h"
+u32 nRF_cnt=0;
+u16 RC_timeout=0;
+
 #ifdef USE_LAME_PRINTF
 // gcc/GNU version
 static void _putc(void *p, char c)
@@ -30,11 +35,13 @@ static void _putc(void *p, char c)
 int fputc(int c, FILE *f)
 {
     // let DMA catch up a bit when using set or dump, we're too fast.
-    while (!isSerialTransmitBufferEmpty(core.mainport));
+    delay(1); //限定一秒钟1000个字符   正常情况下 31*100=3100个 取1/3
+	nRF_checkEvent();
     serialWrite(core.mainport, c);
     return c;
 }
 #endif
+
 
 int main(void)
 {
@@ -82,7 +89,7 @@ int main(void)
 
     activateConfig();
 
-#ifndef CJMCU
+#if 0
     if (spiInit() == SPI_DEVICE_MPU && hw_revision == NAZE32_REV5)
         hw_revision = NAZE32_SP;
 #endif
@@ -183,7 +190,7 @@ int main(void)
     // configure PWM/CPPM read function and max number of channels. spektrum or sbus below will override both of these, if enabled
     for (i = 0; i < RC_CHANS; i++)
         rcData[i] = 1502;
-    rcReadRawFunc = pwmReadRawRC;
+    rcReadRawFunc = nRFReadRawRC;
     core.numRCChannels = MAX_INPUTS;
 
     if (feature(FEATURE_SERIALRX)) {
@@ -247,9 +254,25 @@ int main(void)
     calibratingB = CALIBRATING_BARO_CYCLES;             // 10 seconds init_delay + 200 * 25 ms = 15 seconds before ground pressure settles
     f.SMALL_ANGLE = 1;
 
+    spi2_init();
+    nRF_init(RX,40);
     // loopy
     while (1) {
         loop();
+        if(micros()-nRF_cnt>=1000) { //1ms
+            nRF_cnt=micros();
+            if(RC_timeout>500) { //500ms timeout
+                if(f.ARMED)
+                {
+                    for (i = 0; i < 3; i++){
+                        rcData[i] = mcfg.midrc;      // after specified guard time after RC signal is lost (in 0.1sec)
+                    }
+                    rcData[THROTTLE] = cfg.failsafe_throttle;
+                } 
+            }else RC_timeout++;
+            nRF_checkEvent();
+        }
+
 #ifdef SOFTSERIAL_LOOPBACK
         if (loopbackPort1) {
             while (serialTotalBytesWaiting(loopbackPort1)) {

@@ -264,13 +264,13 @@ reset:
         goto reset;
     }
 }
-
+extern serialPort_t *nRF_serial(void);
 void serialInit(uint32_t baudrate)
 {
     int idx;
 
     numTelemetryPorts = 0;
-    core.mainport = uartOpen(USART1, NULL, baudrate, MODE_RXTX);
+    core.mainport = nRF_serial();
     ports[0].port = core.mainport;
     numTelemetryPorts++;
 
